@@ -42,7 +42,7 @@ fi
 
 # revert all change
 git reset --hard
-git checkout -B deploy e15a995fa6e1a649f34ac98d446be3c4db686a9d
+git checkout -B deploy e15a995fa6e1a649f34ac98d446be3c4db686a9d # stage4_build_request is not yet available
 
 # IRC
 sed -i "s/gci_test/${IRC_BOT_NAME}/g" buildbot_gentoo_ci/config/reporters.py
