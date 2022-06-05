@@ -42,7 +42,7 @@ fi
 
 # revert all change
 git reset --hard
-#git clean -dfx
+git checkout -B deploy e15a995fa6e1a649f34ac98d446be3c4db686a9d
 
 # IRC
 sed -i "s/gci_test/${IRC_BOT_NAME}/g" buildbot_gentoo_ci/config/reporters.py
@@ -131,3 +131,15 @@ if ! buildbot start; then
 fi
 
 #git --no-pager diff
+
+rm -rf default0
+buildbot-worker create-worker --relocatable default0 localhost a89c2c1a-46e0-4ded-81dd-c51afeb7fcfa riscv
+echo "Yongxiang Liang <tanekliang@gmail.com>" > default0/info/admin
+echo "localhost" > default0/info/host
+buildbot-worker restart default0
+
+rm -rf node0
+buildbot-worker create-worker --relocatable node0 localhost node0 riscv
+echo "Yongxiang Liang <tanekliang@gmail.com>" > default0/info/admin
+echo "localhost" > default0/info/host
+buildbot-worker restart node0
