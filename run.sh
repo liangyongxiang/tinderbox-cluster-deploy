@@ -17,11 +17,6 @@ source sandbox/bin/activate
 
 cd "${TINDERBOX_CLUSTER}"
 
-if [ ! -f "buildbot.tac" ]; then
-    buildbot create-master -r .
-    rm master.cfg.sample
-fi
-
 if ! buildbot start; then
     less twistd.log
 fi
