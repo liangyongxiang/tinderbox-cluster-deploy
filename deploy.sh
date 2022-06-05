@@ -109,11 +109,11 @@ for db in ${sql_dbs[@]}; do
         sed -i 's/sv_SE/en_US/g' "sql/$db" # my systemd don't include sv_SE
     fi
 
-	if [ "$db" = "gentooci.sql" ]; then
-		sudo -u postgres psql -f "sql/$db" >/dev/null
-	else
-		sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -f "sql/$db" >/dev/null
-	fi
+    if [ "$db" = "gentooci.sql" ]; then
+        sudo -u postgres psql -f "sql/$db" >/dev/null
+    else
+        sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -f "sql/$db" >/dev/null
+    fi
 done
 # migrate version_control
 migrate version_control postgresql://buildbot:${PASSWORD}@${IP_ADDRESS}/${GENTOOCI_DB} buildbot_gentoo_ci/db/migrate
