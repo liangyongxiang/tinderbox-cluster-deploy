@@ -18,16 +18,12 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # python env
-# exit current sandbox
-if command -v deactivate; then
-    deactivate
-fi
 if [ ! -d sandbox ]; then
-    #rm -rf sandbox
-    #python -m venv --system-site-packages sandbox
     python -m venv sandbox
     source sandbox/bin/activate
     pip install -r requirements.txt
+else
+    source sandbox/bin/activate
 fi
 
 mkdir -p "${TINDERBOX_CLUSTER}"
