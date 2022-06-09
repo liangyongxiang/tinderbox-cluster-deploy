@@ -3,7 +3,7 @@
 set -x
 set -e
 
-TINDERBOX_CLUSTER="${TINDERBOX_CLUSTER:-tinderbox-cluster-i-chi-go}"
+TINDERBOX_CLUSTER="${TINDERBOX_CLUSTER:-tinderbox-cluster}"
 IRC_BOT_NAME="${IRC_BOT_NAME:-#yongxiang-bb}"
 IRC_CHANNEL_NAME="${IRC_CHANNEL_NAME:-#plct-gentoo-riscv-buidbot}"
 PASSWORD="${PASSWORD:-bu1ldbOt}"
@@ -11,6 +11,7 @@ IP_ADDRESS="${IP_ADDRESS:-localhost}"
 GENTOOCI_DB="${GENTOOCI_DB:-gentoo-ci}"
 BUILDBOT_DB="${BUILDBOT_DB:-buildbot}"
 SQL_URL="${SQL_URL:-http://90.231.13.235:8000}"
+SQL_DIR="${SQL_DIR:-/var/lib/postgres/tinderbox-cluster-sql}"
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root"
@@ -35,16 +36,17 @@ if [ -f "buildbot.tac" ]; then
 fi
 
 # clone code
-#if ! git rev-parse --is-inside-work-tree; then
-#    if ! git clone https://anongit.gentoo.org/git/proj/tinderbox-cluster.git .; then
-#        echo "git clone false"
-#        exit 1
-#    fi
-#fi
+if [ ! -d ".git" ]; then
+    if ! git clone https://github.com/FurudeRikaLiveOnHinami/tinderbox-cluster.git .; then
+        echo "git clone false"
+        exit 1
+    fi
+fi
 
-# revert all change
+## revert all change
 git reset --hard
 #git checkout -B deploy e15a995fa6e1a649f34ac98d446be3c4db686a9d # stage4_build_request is not yet available
+git checkout -B deploy origin/deploy_without_run_build_stage4_request # stage4_build_request is not yet available
 
 # IRC
 sed -i "s/gci_test/${IRC_BOT_NAME}/g" buildbot_gentoo_ci/config/reporters.py
@@ -58,7 +60,6 @@ sed -i "/'uuid'/d" master.cfg
 sed -i '/^worker_data.*/a \
     {"uuid" : "local0", "password" : "riscv", "type" : "local",   "enable" : True, },\
     {"uuid" : "local1", "password" : "riscv", "type" : "local",   "enable" : True, },\
-    {"uuid" : "node0", "password" : "riscv", "type" : "node",    "enable" : True, },\
     {"uuid" : "a89c2c1a-46e0-4ded-81dd-c51afeb7fcfa", "password" : "riscv", "type" : "default", "enable" : True, },\
     {"uuid" : "a89c2c1a-46e0-4ded-81dd-c51afeb7fcfd", "password" : "riscv", "type" : "default", "enable" : True, },\
 ' master.cfg
@@ -71,6 +72,10 @@ sed -i "s/sa.Column('image'/#sa.Column('image'/g" buildbot_gentoo_ci/db/model.py
 # gentooci.cfg
 # database
 sed -i "s/password@ip/${PASSWORD}@${IP_ADDRESS}/g" gentooci.cfg
+
+mkdir -p ${SQL_DIR}
+chown postgres:postgres ${SQL_DIR}
+pushd ${SQL_DIR}
 
 # delete the database and run away, 删库跑路
 # TODO: backup database
@@ -105,18 +110,21 @@ sql_dbs=(
     repositorys_gitpullers.sql
 )
 for db in ${sql_dbs[@]}; do
-    if [ ! -f "sql/$db" ]; then
+    if [ ! -f "${SQL_DIR}/$db" ]; then
         echo "$db not exists"
-        wget --output-document "sql/$db" "$SQL_URL/$db"
-        sed -i 's/sv_SE/en_US/g' "sql/$db" # my systemd don't include sv_SE
+        wget --output-document "${SQL_DIR}/$db" "$SQL_URL/$db"
+        sed -i 's/sv_SE/en_US/g' "${SQL_DIR}/$db" # my systemd don't include sv_SE
     fi
 
     if [ "$db" = "gentooci.sql" ]; then
-        sudo -u postgres psql -f "sql/$db" >/dev/null
+        sudo -u postgres psql -f "${SQL_DIR}/$db" >/dev/null
     else
-        sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -f "sql/$db" >/dev/null
+        sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -f "${SQL_DIR}/$db" >/dev/null
     fi
 done
+
+popd 
+
 # migrate version_control
 migrate version_control postgresql://buildbot:${PASSWORD}@${IP_ADDRESS}/${GENTOOCI_DB} buildbot_gentoo_ci/db/migrate
 
@@ -131,17 +139,17 @@ buildbot upgrade-master
 if ! buildbot start; then
     less twistd.log
 fi
-
-#git --no-pager diff
-
-rm -rf default0
-buildbot-worker create-worker --relocatable default0 localhost a89c2c1a-46e0-4ded-81dd-c51afeb7fcfa riscv
-echo "Yongxiang Liang <tanekliang@gmail.com>" > default0/info/admin
-echo "localhost" > default0/info/host
-buildbot-worker restart default0
-
-rm -rf node0
-buildbot-worker create-worker --relocatable node0 localhost node0 riscv
-echo "Yongxiang Liang <tanekliang@gmail.com>" > default0/info/admin
-echo "localhost" > default0/info/host
-buildbot-worker restart node0
+#
+##git --no-pager diff
+#
+#rm -rf default0
+#buildbot-worker create-worker --relocatable default0 localhost a89c2c1a-46e0-4ded-81dd-c51afeb7fcfa riscv
+#echo "Yongxiang Liang <tanekliang@gmail.com>" > default0/info/admin
+#echo "localhost" > default0/info/host
+#buildbot-worker restart default0
+#
+#rm -rf node0
+#buildbot-worker create-worker --relocatable node0 localhost node0 riscv
+#echo "Yongxiang Liang <tanekliang@gmail.com>" > default0/info/admin
+#echo "localhost" > default0/info/host
+#buildbot-worker restart node0
