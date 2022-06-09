@@ -3,7 +3,7 @@
 set -x
 set -e
 
-TINDERBOX_CLUSTER="${TINDERBOX_CLUSTER:-tinderbox-cluster}"
+TINDERBOX_CLUSTER="${TINDERBOX_CLUSTER:-tinderbox-cluster-i-chi-go}"
 IRC_BOT_NAME="${IRC_BOT_NAME:-#yongxiang-bb}"
 IRC_CHANNEL_NAME="${IRC_CHANNEL_NAME:-#plct-gentoo-riscv-buidbot}"
 PASSWORD="${PASSWORD:-bu1ldbOt}"
@@ -30,19 +30,21 @@ mkdir -p "${TINDERBOX_CLUSTER}"
 cd "${TINDERBOX_CLUSTER}"
 
 # alway stop
-buildbot stop
+if [ -f "buildbot.tac" ]; then
+    buildbot stop
+fi
 
 # clone code
-if ! git rev-parse --is-inside-work-tree; then
-    if ! git clone https://anongit.gentoo.org/git/proj/tinderbox-cluster.git .; then
-        echo "git clone false"
-        exit 1
-    fi
-fi
+#if ! git rev-parse --is-inside-work-tree; then
+#    if ! git clone https://anongit.gentoo.org/git/proj/tinderbox-cluster.git .; then
+#        echo "git clone false"
+#        exit 1
+#    fi
+#fi
 
 # revert all change
 git reset --hard
-git checkout -B deploy e15a995fa6e1a649f34ac98d446be3c4db686a9d # stage4_build_request is not yet available
+#git checkout -B deploy e15a995fa6e1a649f34ac98d446be3c4db686a9d # stage4_build_request is not yet available
 
 # IRC
 sed -i "s/gci_test/${IRC_BOT_NAME}/g" buildbot_gentoo_ci/config/reporters.py
