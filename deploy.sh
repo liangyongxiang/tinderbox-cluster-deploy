@@ -5,13 +5,12 @@ set -e
 
 TINDERBOX_CLUSTER="${TINDERBOX_CLUSTER:-tinderbox-cluster}"
 IRC_BOT_NAME="${IRC_BOT_NAME:-#yongxiang-bb}"
-IRC_CHANNEL_NAME="${IRC_CHANNEL_NAME:-#plct-gentoo-riscv-buidbot}"
+IRC_CHANNEL_NAME="${IRC_CHANNEL_NAME:-#plct-bb}"
 PASSWORD="${PASSWORD:-bu1ldbOt}"
 IP_ADDRESS="${IP_ADDRESS:-localhost}"
 GENTOOCI_DB="${GENTOOCI_DB:-gentoo-ci}"
-BUILDBOT_DB="${BUILDBOT_DB:-buildbot}"
 SQL_URL="${SQL_URL:-http://90.231.13.235:8000}"
-SQL_DIR="${SQL_DIR:-/var/lib/postgres/tinderbox-cluster-sql}"
+SQL_DIR="${SQL_DIR:-/var/tmp/tinderbox/sql}"
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root"
@@ -80,16 +79,17 @@ pushd ${SQL_DIR}
 # delete the database and run away, 删库跑路
 # TODO: backup database
 sudo -u postgres dropdb --if-exists ${GENTOOCI_DB} #>/dev/null
-sudo -u postgres dropdb --if-exists ${BUILDBOT_DB} #>/dev/null
+sudo -u postgres dropdb --if-exists buildbot #>/dev/null
 sudo -u postgres dropuser --if-exists buildbot #>/dev/null
 
 # buildbot db init
 sudo -u postgres psql -c "CREATE USER buildbot WITH PASSWORD '\${PASSWORD}';"
-sudo -u postgres createdb -O buildbot ${BUILDBOT_DB}
+sudo -u postgres createdb --owner buildbot buildbot
+sudo -u postgres createdb --owner buildbot ${GENTOOCI_DB} --template template0
 
 # import gentoo-ci db
 sql_dbs=(
-    gentooci.sql
+    gentoo_ci_schema.sql
     keywords.sql
     categorys.sql
     repositorys.sql
@@ -116,11 +116,7 @@ for db in ${sql_dbs[@]}; do
         sed -i 's/sv_SE/en_US/g' "${SQL_DIR}/$db" # my systemd don't include sv_SE
     fi
 
-    if [ "$db" = "gentooci.sql" ]; then
-        sudo -u postgres psql -f "${SQL_DIR}/$db" >/dev/null
-    else
-        sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -f "${SQL_DIR}/$db" >/dev/null
-    fi
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -f "${SQL_DIR}/$db" >/dev/null
 done
 
 popd 
