@@ -23,7 +23,7 @@ if [ -d /mnt/${WORKER_NAME} ]; then
   exit 1
 fi
 
-mkdir "/mnt/${WORKERNAME}"
+mkdir "/mnt/${WORKER_NAME}"
 
 cp deploy_in_chroot.sh "/mnt/${WORKERNAME}"
 chmod a+x deploy_in_chroot.sh 
