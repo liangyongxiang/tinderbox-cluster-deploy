@@ -8,6 +8,8 @@ PASSWORD="${PASSWORD:-riscv}"
 MASTER_HOST="${MASTER_HOST:-localhost}"
 MASTER_PORT="${MASTER_PORT:-9989}"
 
+echo 'ACCEPT_KEYWORDS="~amd64"' >> /etc/portage/make.conf
+
 emerge-webrsync
 
 chown -R portage:portage /var/db/repos/gentoo
