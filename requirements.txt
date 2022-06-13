@@ -6,3 +6,4 @@ sqlalchemy-migrate==0.13.0
 minio==5.0.7
 portage
 requests
+asyncio
