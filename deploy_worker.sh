@@ -6,6 +6,8 @@ set -e
 
 WORKER_NAME="${WORKER_NAME:-defaultWorker}"
 PASSWORD="${PASSWORD:-riscv}"
+MASTER_HOST="${MASTER_HOST:-localhost}"
+MASTER_PORT="${MASTER_PORT:-9989}"
 STAGE3_MIRROR="${STAGE3_MIRRORS:-https://gentoo.osuosl.org/}"
 STAGE3_FILENAME="${STAGE3_FILENAME:-stage3-amd64-openrc-20220612T170541Z.tar.xz}"
 
@@ -43,4 +45,4 @@ mount --make-rslave dev
 mount --bind /run run
 mount --make-slave run
 
-chroot "/mnt/${WORKERNAME}" /bin/bash -c "WORKER_NAME=${WORKER_NAME} PASSWORD="${PASSWORD:-riscv}" deploy_in_chroot.sh"
+chroot "/mnt/${WORKERNAME}" /bin/bash -c "WORKER_NAME=${WORKER_NAME} PASSWORD=${PASSWORD:-riscv} MASTER_HOST=${MASTER_HOST} MASTER_PORT=${MASTER_PORT}  deploy_in_chroot.sh"
