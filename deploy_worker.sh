@@ -25,7 +25,7 @@ fi
 
 mkdir "/mnt/${WORKER_NAME}"
 
-cp deploy_in_chroot.sh "/mnt/${WORKERNAME}"
+cp deploy_in_chroot.sh "/mnt/${WORKER_NAME}"
 chmod a+x deploy_in_chroot.sh 
 
 cd "/mnt/${WORKER_NAME}"
@@ -35,7 +35,8 @@ wget "${STAGE3_MIRROR}/releases/amd64/autobuilds/current-stage3-amd64-openrc/${S
 tar xpf "${STAGE3_FILENAME}" --numeric-owner --xattrs-include='*.*'
 
 cp -L /etc/resolv.conf etc
-cp usr/share/portage/config/repos.conf
+mkdir etc/portage/repos.conf/gentoo.conf
+cp usr/share/portage/config/repos.conf etc/portage/repos.conf/gentoo.conf
 
 mount -t proc /proc proc
 mount --rbind /sys sys
