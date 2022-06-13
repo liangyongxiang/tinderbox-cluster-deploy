@@ -26,9 +26,10 @@ fi
 mkdir "/mnt/${WORKER_NAME}"
 
 cp deploy_in_chroot.sh "/mnt/${WORKER_NAME}"
-chmod a+x deploy_in_chroot.sh 
 
 cd "/mnt/${WORKER_NAME}"
+
+chmod a+x deploy_in_chroot.sh 
 
 wget "${STAGE3_MIRROR}/releases/amd64/autobuilds/current-stage3-amd64-openrc/${STAGE3_FILENAME}"
 
