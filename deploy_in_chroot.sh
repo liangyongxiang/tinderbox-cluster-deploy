@@ -26,6 +26,6 @@ buildbot-worker create-worker --umask=0o22 "${MASTER_HOST}_${WORKER_NAME}" "${MA
 
 cd "${MASTER_HOST}_${WORKER_NAME}"
 
-if ! buildbot start; then
+if ! buildbot-worker start; then
   less twistd.log
 fi
