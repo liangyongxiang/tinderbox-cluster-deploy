@@ -14,8 +14,8 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-if [ -d /mnt/${WORKERNAME} ]; then
-  echo "File /mnt/${WORKERNAME} exists"
+if [ -d /mnt/${WORKER_NAME} ]; then
+  echo "File /mnt/${WORKER_NAME} exists"
   echo "Please check if you worker has already been created"
   echo "Otherwise, Plsease Remove the folder"
   exit 1
