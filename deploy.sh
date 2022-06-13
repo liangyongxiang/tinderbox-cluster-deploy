@@ -8,6 +8,7 @@ IRC_BOT_NAME="${IRC_BOT_NAME:-#yongxiang-bb}"
 IRC_CHANNEL_NAME="${IRC_CHANNEL_NAME:-#plct-bb}"
 PASSWORD="${PASSWORD:-bu1ldbOt}"
 IP_ADDRESS="${IP_ADDRESS:-localhost}"
+DB_IP_ADDRESS="${DB_IP_ADDRESS:-localhost}"
 GENTOOCI_DB="${GENTOOCI_DB:-gentoo-ci}"
 SQL_URL="${SQL_URL:-http://90.231.13.235:8000}"
 SQL_DIR="${SQL_DIR:-/var/tmp/tinderbox/sql}"
@@ -25,6 +26,8 @@ if [ ! -d sandbox ]; then
 else
     source sandbox/bin/activate
 fi
+
+export PATH="$(pwd)/sandbox/lib/portage/bin:${PATH}"
 
 mkdir -p "${TINDERBOX_CLUSTER}"
 cd "${TINDERBOX_CLUSTER}"
@@ -53,7 +56,7 @@ sed -i "s/#gentoo-ci/${IRC_CHANNEL_NAME}/g" buildbot_gentoo_ci/config/reporters.
 
 # master.conf
 # database
-sed -i "s/password@ip/${PASSWORD}@${IP_ADDRESS}/g" master.cfg
+sed -i "s/password@ip/${PASSWORD}@${DB_IP_ADDRESS}/g" master.cfg
 # worker_data
 sed -i "/'uuid'/d" master.cfg
 sed -i '/^worker_data.*/a \
@@ -62,15 +65,17 @@ sed -i '/^worker_data.*/a \
     {"uuid" : "a89c2c1a-46e0-4ded-81dd-c51afeb7fcfa", "password" : "riscv", "type" : "default", "enable" : True, },\
     {"uuid" : "a89c2c1a-46e0-4ded-81dd-c51afeb7fcfd", "password" : "riscv", "type" : "default", "enable" : True, },\
 ' master.cfg
+# buildbot URL
+sed -i "s|c\['buildbotURL'\] = \"http://localhost:8010/\"|c['buildbotURL'] = \"http://${IP_ADDRESS}:8010/\""
 
 # logparser.json
 # database
-sed -i "s/user:password@host/buildbot:${PASSWORD}@${IP_ADDRESS}/g" logparser.json
-sed -i "s/sa.Column('image'/#sa.Column('image'/g" buildbot_gentoo_ci/db/model.py
+sed -i "s/user:password@host/buildbot:${PASSWORD}@${DB_IP_ADDRESS}/g" logparser.json
+# sed -i "s/sa.Column('image'/#sa.Column('image'/g" buildbot_gentoo_ci/db/model.py
 
 # gentooci.cfg
 # database
-sed -i "s/password@ip/${PASSWORD}@${IP_ADDRESS}/g" gentooci.cfg
+sed -i "s/password@ip/${PASSWORD}@${DB_IP_ADDRESS}/g" gentooci.cfg
 
 mkdir -p ${SQL_DIR}
 chown postgres:postgres ${SQL_DIR}
@@ -122,12 +127,15 @@ done
 popd 
 
 # migrate version_control
-migrate version_control postgresql://buildbot:${PASSWORD}@${IP_ADDRESS}/${GENTOOCI_DB} buildbot_gentoo_ci/db/migrate
+migrate version_control postgresql://buildbot:${PASSWORD}@${DB_IP_ADDRESS}/${GENTOOCI_DB} buildbot_gentoo_ci/db/migrate
 
 if [ ! -f "buildbot.tac" ]; then
     buildbot create-master -r .
     rm master.cfg.sample
 fi
+
+# buildbot.tac
+sed -i 's/umask = None/umask = 0o022/' buildbot.tac
 
 # update database
 buildbot upgrade-master
