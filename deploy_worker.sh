@@ -46,4 +46,4 @@ mount --make-rslave dev
 mount --bind /run run
 mount --make-slave run
 
-chroot "/mnt/${WORKER_NAME}" /bin/bash -c "WORKER_NAME=${WORKER_NAME} PASSWORD=${PASSWORD:-riscv} MASTER_HOST=${MASTER_HOST} MASTER_PORT=${MASTER_PORT}  deploy_in_chroot.sh"
+chroot "/mnt/${WORKER_NAME}" /bin/bash -c "WORKER_NAME=${WORKER_NAME} PASSWORD=${PASSWORD:-riscv} MASTER_HOST=${MASTER_HOST} MASTER_PORT=${MASTER_PORT} ./deploy_in_chroot.sh"
