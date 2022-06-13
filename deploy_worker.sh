@@ -35,7 +35,7 @@ wget "${STAGE3_MIRROR}/releases/amd64/autobuilds/current-stage3-amd64-openrc/${S
 tar xpf "${STAGE3_FILENAME}" --numeric-owner --xattrs-include='*.*'
 
 cp -L /etc/resolv.conf etc
-mkdir etc/portage/repos.conf/gentoo.conf
+mkdir etc/portage/repos.conf
 cp usr/share/portage/config/repos.conf etc/portage/repos.conf/gentoo.conf
 
 mount -t proc /proc proc
