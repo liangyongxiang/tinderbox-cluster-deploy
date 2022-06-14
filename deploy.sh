@@ -65,8 +65,8 @@ sed -i '/^worker_data.*/a \
     {"uuid" : "local1", "password" : "riscv", "type" : "local",   "enable" : True, },\
     {"uuid" : "a89c2c1a-46e0-4ded-81dd-c51afeb7fcfa", "password" : "riscv", "type" : "default", "enable" : True, },\
     {"uuid" : "a89c2c1a-46e0-4ded-81dd-c51afeb7fcfd", "password" : "riscv", "type" : "default", "enable" : True, },\
-    {"uuid" : "nodeWorker", "password" : "riscv", type : "node", "enable" : True, }, \
-    {"uuid" : "dockerWorker", "password" : "riscv", type : "docker", "enable": True, }, \
+    {"uuid" : "nodeWorker", "password" : "riscv", "type" : "node", "enable" : True, }, \
+    {"uuid" : "dockerWorker", "password" : "riscv", "type" : "docker", "enable": True, }, \
 ' master.cfg
 # buildbot URL
 sed -i "s|c\['buildbotURL'\] = \"http://localhost:8010/\"|c['buildbotURL'] = \"http://${IP_ADDRESS}:8010/\"|" master.cfg
