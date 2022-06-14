@@ -16,7 +16,7 @@ chown -R portage:portage /var/db/repos/gentoo
 
 emerge -uUDN --with-bdeps=y @world
 
-emerge dev-util/pkgcheck dev-vcs/git
+emerge dev-util/pkgcheck dev-vcs/git app-arch/zstd
 
 emerge dev-util/buildbot-worker
 
