@@ -69,7 +69,7 @@ sed -i '/^worker_data.*/a \
     {"uuid" : "dockerWorker", "password", "riscv", type : "docker", "enable": True, }, \
 ' master.cfg
 # buildbot URL
-sed -i "s|c\['buildbotURL'\] = \"http://localhost:8010/\"|c['buildbotURL'] = \"http://${IP_ADDRESS}:8010/\""
+sed -i "s|c\['buildbotURL'\] = \"http://localhost:8010/\"|c['buildbotURL'] = \"http://${IP_ADDRESS}:8010/\"|"
 
 # logparser.json
 # database
