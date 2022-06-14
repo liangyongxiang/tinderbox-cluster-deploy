@@ -3,15 +3,17 @@
 set -x
 set -e
 
-TINDERBOX_CLUSTER="${TINDERBOX_CLUSTER:-tinderbox-cluster}"
-IRC_BOT_NAME="${IRC_BOT_NAME:-#yongxiang-bb}"
-IRC_CHANNEL_NAME="${IRC_CHANNEL_NAME:-#plct-bb}"
-PASSWORD="${PASSWORD:-bu1ldbOt}"
-IP_ADDRESS="${IP_ADDRESS:-localhost}"
-DB_IP_ADDRESS="${DB_IP_ADDRESS:-localhost}"
-GENTOOCI_DB="${GENTOOCI_DB:-gentoo-ci}"
+TINDERBOX_BASEDIR="${TINDERBOX_BASEDIR:-/var/tmp/tinderbox}"
 SQL_URL="${SQL_URL:-http://90.231.13.235:8000}"
-SQL_DIR="${SQL_DIR:-/var/tmp/tinderbox/sql}"
+
+IRC_BOT_NAME="${IRC_BOT_NAME:-#plct-bbbot}"
+IRC_CHANNEL_NAME="${IRC_CHANNEL_NAME:-#plct-bb}"
+
+WEB_IP_ADDRESS="${WEB_IP_ADDRESS:-localhost}"
+DB_IP_ADDRESS="${DB_IP_ADDRESS:-localhost}"
+
+GENTOOCI_DB="${GENTOOCI_DB:-gentoo-ci}"
+PASSWORD="${PASSWORD:-bu1ldbOt}"
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root"
@@ -27,10 +29,11 @@ else
     source sandbox/bin/activate
 fi
 
+# fix portage aux_get
 export PATH="$(pwd)/sandbox/lib/portage/bin:${PATH}"
 
-mkdir -p "${TINDERBOX_CLUSTER}"
-cd "${TINDERBOX_CLUSTER}"
+mkdir -p tinderbox-cluster
+cd tinderbox-cluster
 
 # alway stop
 if [ -f "buildbot.tac" ]; then
@@ -47,8 +50,6 @@ fi
 
 ## revert all change
 git reset --hard
-#git checkout -B deploy e15a995fa6e1a649f34ac98d446be3c4db686a9d # stage4_build_request is not yet available
-#git checkout -B deploy origin/deploy_without_run_build_stage4_request # stage4_build_request is not yet available
 git checkout -B deploy origin/master
 
 # IRC
@@ -69,7 +70,7 @@ sed -i '/^worker_data.*/a \
     {"uuid" : "dockerWorker", "password" : "riscv", "type" : "docker", "enable": True, }, \
 ' master.cfg
 # buildbot URL
-sed -i "s|c\['buildbotURL'\] = \"http://localhost:8010/\"|c['buildbotURL'] = \"http://${IP_ADDRESS}:8010/\"|" master.cfg
+sed -i "s|c\['buildbotURL'\] = \"http://localhost:8010/\"|c['buildbotURL'] = \"http://${WEB_IP_ADDRESS}:8010/\"|" master.cfg
 
 # logparser.json
 # database
@@ -80,9 +81,7 @@ sed -i "s/user:password@host/buildbot:${PASSWORD}@${DB_IP_ADDRESS}/g" logparser.
 # database
 sed -i "s/password@ip/${PASSWORD}@${DB_IP_ADDRESS}/g" gentooci.cfg
 
-mkdir -p ${SQL_DIR}
-chown postgres:postgres ${SQL_DIR}
-pushd ${SQL_DIR}
+mkdir -p sql
 
 # delete the database and run away, 删库跑路
 # TODO: backup database
@@ -118,16 +117,14 @@ sql_dbs=(
     repositorys_gitpullers.sql
 )
 for db in ${sql_dbs[@]}; do
-    if [ ! -f "${SQL_DIR}/$db" ]; then
+    if [ ! -f "sql/$db" ]; then
         echo "$db not exists"
-        wget --output-document "${SQL_DIR}/$db" "$SQL_URL/$db"
-        sed -i 's/sv_SE/en_US/g' "${SQL_DIR}/$db" # my systemd don't include sv_SE
+        wget --output-document "sql/$db" "$SQL_URL/$db"
+        sed -i 's/sv_SE/en_US/g' "sql/$db" # my systemd don't include sv_SE
     fi
 
-    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -f "${SQL_DIR}/$db" >/dev/null
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -f "sql/$db" >/dev/null
 done
-
-popd 
 
 # migrate version_control
 migrate version_control postgresql://buildbot:${PASSWORD}@${DB_IP_ADDRESS}/${GENTOOCI_DB} buildbot_gentoo_ci/db/migrate
