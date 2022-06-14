@@ -20,6 +20,22 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+distributor=$(lsb_release --id --short)
+if [ "${distributor}" = "Gentoo" ]; then
+    # TODO: systemd
+    emerge-webrsync
+    emerge --verbose --quiet --update --noreplace app-misc/tmux dev-vcs/git app-misc/tmux dev-db/postgresql dev-python/pip
+    emerge --config dev-db/postgresql:14
+    /etc/init.d/postgresql-* start
+else
+    echo "TODO: add $distributor support"
+    echo -e "Please install the dependencies manually: \ngit postgresql python pip"
+fi
+
+# get others resources
+cd "${TINDERBOX_BASEDIR}"
+git clone https://github.com/liangyongxiang/tinderbox-cluster-deploy .
+
 # python env
 if [ ! -d sandbox ]; then
     python -m venv sandbox
@@ -28,7 +44,6 @@ if [ ! -d sandbox ]; then
 else
     source sandbox/bin/activate
 fi
-
 # fix portage aux_get
 export PATH="$(pwd)/sandbox/lib/portage/bin:${PATH}"
 
@@ -143,3 +158,5 @@ buildbot upgrade-master
 if ! buildbot start; then
     less twistd.log
 fi
+
+
