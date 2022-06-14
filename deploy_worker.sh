@@ -4,7 +4,10 @@
 set -x
 set -e
 
+WORKER_BASEDIR="${WORKER_BASEDIR:-/mnt}"
 WORKER_NAME="${WORKER_NAME:-defaultWorker}"
+WORKER_PATH="${WORKER_BASEDIR}/${WORKER_NAME}"
+
 PASSWORD="${PASSWORD:-riscv}"
 MASTER_HOST="${MASTER_HOST:-localhost}"
 MASTER_PORT="${MASTER_PORT:-9989}"
@@ -16,20 +19,18 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-if [ -d /mnt/${WORKER_NAME} ]; then
-  echo "File /mnt/${WORKER_NAME} exists"
+if [ -d "${WORKER_PATH}" ]; then
+  echo "File ${WORKER_PATH} exists"
   echo "Please check if you worker has already been created"
   echo "Otherwise, Plsease Remove the folder"
   exit 1
 fi
 
-mkdir "/mnt/${WORKER_NAME}"
+mkdir "${WORKER_PATH}"
+cd "${WORKER_PATH}"
 
-cp deploy_in_chroot.sh "/mnt/${WORKER_NAME}"
-
-cd "/mnt/${WORKER_NAME}"
-
-chmod a+x deploy_in_chroot.sh 
+cp deploy_in_chroot.sh .
+chmod a+x deploy_in_chroot.sh
 
 wget "${STAGE3_MIRROR}/releases/amd64/autobuilds/current-stage3-amd64-openrc/${STAGE3_FILENAME}"
 
