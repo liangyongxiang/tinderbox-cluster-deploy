@@ -48,7 +48,8 @@ fi
 ## revert all change
 git reset --hard
 #git checkout -B deploy e15a995fa6e1a649f34ac98d446be3c4db686a9d # stage4_build_request is not yet available
-git checkout -B deploy origin/deploy_without_run_build_stage4_request # stage4_build_request is not yet available
+#git checkout -B deploy origin/deploy_without_run_build_stage4_request # stage4_build_request is not yet available
+git checkout -B deploy origin/master
 
 # IRC
 sed -i "s/gci_test/${IRC_BOT_NAME}/g" buildbot_gentoo_ci/config/reporters.py
@@ -64,6 +65,8 @@ sed -i '/^worker_data.*/a \
     {"uuid" : "local1", "password" : "riscv", "type" : "local",   "enable" : True, },\
     {"uuid" : "a89c2c1a-46e0-4ded-81dd-c51afeb7fcfa", "password" : "riscv", "type" : "default", "enable" : True, },\
     {"uuid" : "a89c2c1a-46e0-4ded-81dd-c51afeb7fcfd", "password" : "riscv", "type" : "default", "enable" : True, },\
+    {"uuid" : "nodeWorker", "password" : "riscv", type : "node", "enable" : True, }, \
+    {"uuid" : "dockerWorker", "password", "riscv", type : "docker", "enable": True, }, \
 ' master.cfg
 # buildbot URL
 sed -i "s|c\['buildbotURL'\] = \"http://localhost:8010/\"|c['buildbotURL'] = \"http://${IP_ADDRESS}:8010/\""
