@@ -5,6 +5,7 @@ set -e
 
 TINDERBOX_BASEDIR="${TINDERBOX_BASEDIR:-/var/tmp/tinderbox}"
 SQL_URL="${SQL_URL:-http://90.231.13.235:8000}"
+INSTALL_DEPEND="${INSTALL_DEPEND:-yes}"
 
 IRC_BOT_NAME="${IRC_BOT_NAME:-#plct-bbbot}"
 IRC_CHANNEL_NAME="${IRC_CHANNEL_NAME:-#plct-bb}"
@@ -20,21 +21,32 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-distributor=$(lsb_release --id --short)
-if [ "${distributor}" = "Gentoo" ]; then
-    # TODO: systemd
-    emerge-webrsync
-    emerge --verbose --quiet --update --noreplace app-misc/tmux dev-vcs/git app-misc/tmux dev-db/postgresql dev-python/pip
-    emerge --config dev-db/postgresql:14
-    /etc/init.d/postgresql-* start
-else
-    echo "TODO: add $distributor support"
-    echo -e "Please install the dependencies manually: \ngit postgresql python pip"
+if [ "${INSTALL_DEPEND}" = "yes" ]; then
+    distributor=$(lsb_release --id --short)
+    if [ "${distributor}" = "Gentoo" ]; then
+        emerge-webrsync
+        emerge --verbose --quiet --update --noreplace app-misc/tmux dev-vcs/git app-misc/tmux dev-db/postgresql dev-python/pip
+        emerge --config dev-db/postgresql:14
+        if [ "$(cat /proc/1/comm)" = "systemd" ]; then
+            systemctl enable --now postgresql-14
+        else
+            rc-update add postgresql-14
+            rc-service postgresql-14 start
+        fi
+    else
+        echo "TODO: add $distributor support"
+        echo -e "Please install the dependencies manually: \ngit postgresql python pip"
+    fi
 fi
 
 # get others resources
 cd "${TINDERBOX_BASEDIR}"
-git clone https://github.com/liangyongxiang/tinderbox-cluster-deploy .
+if [ ! -d ".git" ]; then
+    if ! git clone https://github.com/liangyongxiang/tinderbox-cluster-deploy.git .; then
+        echo "git clone false"
+        exit 1
+    fi
+fi
 
 # python env
 if [ ! -d sandbox ]; then
