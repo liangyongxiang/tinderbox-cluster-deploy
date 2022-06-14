@@ -14,13 +14,13 @@ emerge-webrsync
 
 chown -R portage:portage /var/db/repos/gentoo
 
-emerge -uUDN --with-bdeps=y @world
-
-emerge dev-util/pkgcheck dev-vcs/git app-arch/zstd
+emerge dev-util/pkgcheck dev-vcs/git app-arch/zstd dev-lang/rust-bin
 
 emerge --noreplace sys-apps/portage
 
 emerge dev-util/buildbot-worker
+
+emerge -uUDN --with-bdeps=y @world
 
 cd /var/tmp
 
