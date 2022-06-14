@@ -18,6 +18,8 @@ emerge -uUDN --with-bdeps=y @world
 
 emerge dev-util/pkgcheck dev-vcs/git app-arch/zstd
 
+emerge --noreplace sys-apps/portage
+
 emerge dev-util/buildbot-worker
 
 cd /var/tmp
