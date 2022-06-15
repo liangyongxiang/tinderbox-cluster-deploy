@@ -42,12 +42,16 @@ tar xpf "${SCRIPT_DIR}/${STAGE3_FILENAME}" --numeric-owner --xattrs-include='*.*
 mkdir etc/portage/repos.conf
 cp usr/share/portage/config/repos.conf etc/portage/repos.conf/gentoo.conf
 
+# build failed for python3.8 in riscv
+# /dev/shm: https://github.com/containers/bubblewrap/issues/329
+
 bwrap \
     --die-with-parent \
     --bind      "${WORKER_PATH}" / \
     --ro-bind   /etc/resolv.conf /etc/resolv.conf \
     --tmpfs     /run \
     --dev       /dev \
+    --perms 1777 --tmpfs /dev/shm \
     --bind      /sys /sys \
     --proc      /proc \
     --setenv    WORKER_NAME "${WORKER_NAME}" \
