@@ -16,7 +16,7 @@ DB_IP_ADDRESS="${DB_IP_ADDRESS:-localhost}"
 GENTOOCI_DB="${GENTOOCI_DB:-gentoo-ci}"
 PASSWORD="${PASSWORD:-bu1ldbOt}"
 
-TEST_ARCH="${TEST_ARCH:-riscv}"
+TEST_ARCH="${TEST_ARCH:-amd64}"
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root"
