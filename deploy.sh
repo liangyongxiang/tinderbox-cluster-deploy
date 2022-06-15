@@ -138,6 +138,7 @@ sudo -u postgres psql -c "CREATE USER buildbot WITH PASSWORD '\${PASSWORD}';"
 sudo -u postgres createdb --owner buildbot buildbot
 sudo -u postgres createdb --owner buildbot ${GENTOOCI_DB} --template template0
 
+# FIXME: Configure data of gentoo-ci db instead of just importing them
 # import gentoo-ci db
 cp "${TINDERBOX_BASEDIR}/riscv_project.sql" "${TINDERBOX_BASEDIR}/riscv_projects_portage.sql" sql
 sql_dbs=(
@@ -187,6 +188,8 @@ sed -i 's/umask = None/umask = 0o022/' buildbot.tac
 # update database
 buildbot upgrade-master
 
+# FIXME: You will probably wish to create a separate user account for the buildmaster, perhaps named buildmaster. Do not run the buildmaster as root!
+#        See https://docs.buildbot.net/latest/manual/installation/buildmaster.html#creating-a-buildmaster
 if ! buildbot start; then
     less twistd.log
 fi
