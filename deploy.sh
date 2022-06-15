@@ -7,7 +7,7 @@ TINDERBOX_BASEDIR="${TINDERBOX_BASEDIR:-/var/tmp/tinderbox}"
 SQL_URL="${SQL_URL:-http://90.231.13.235:8000}"
 INSTALL_DEPEND="${INSTALL_DEPEND:-yes}"
 
-IRC_BOT_NAME="${IRC_BOT_NAME:-#plct-bbbot}"
+IRC_BOT_NAME="${IRC_BOT_NAME:-plct-bbbot}"
 IRC_CHANNEL_NAME="${IRC_CHANNEL_NAME:-#plct-bb}"
 
 WEB_IP_ADDRESS="${WEB_IP_ADDRESS:-localhost}"
@@ -15,6 +15,8 @@ DB_IP_ADDRESS="${DB_IP_ADDRESS:-localhost}"
 
 GENTOOCI_DB="${GENTOOCI_DB:-gentoo-ci}"
 PASSWORD="${PASSWORD:-bu1ldbOt}"
+
+TEST_ARCH="${TEST_ARCH:-riscv}"
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root"
@@ -40,6 +42,7 @@ if [ "${INSTALL_DEPEND}" = "yes" ]; then
 fi
 
 # get others resources
+mkdir -p "${TINDERBOX_BASEDIR}"
 cd "${TINDERBOX_BASEDIR}"
 if [ ! -d ".git" ]; then
     if ! git clone https://github.com/liangyongxiang/tinderbox-cluster-deploy.git .; then
@@ -83,6 +86,10 @@ git checkout -B deploy origin/master
 sed -i "s/gci_test/${IRC_BOT_NAME}/g" buildbot_gentoo_ci/config/reporters.py
 sed -i "s/#gentoo-ci/${IRC_CHANNEL_NAME}/g" buildbot_gentoo_ci/config/reporters.py
 
+sed -i "s/-j14/-j$(nproc)/g" buildbot_gentoo_ci/steps/portage.py
+sed -i "s/amd64/${TEST_ARCH}/g" buildbot_gentoo_ci/steps/portage.py
+sed -i "/makeconf.*-march=native/d" buildbot_gentoo_ci/steps/portage.py
+
 # master.conf
 # database
 sed -i "s/password@ip/${PASSWORD}@${DB_IP_ADDRESS}/g" master.cfg
@@ -98,6 +105,14 @@ sed -i '/^worker_data.*/a \
 ' master.cfg
 # buildbot URL
 sed -i "s|c\['buildbotURL'\] = \"http://localhost:8010/\"|c['buildbotURL'] = \"http://${WEB_IP_ADDRESS}:8010/\"|" master.cfg
+
+# FIXME: auto create dir
+mkdir -p workers/local0
+mkdir -p workers/local1
+mkdir -p workers/a89c2c1a-46e0-4ded-81dd-c51afeb7fcfa
+mkdir -p workers/a89c2c1a-46e0-4ded-81dd-c51afeb7fcfd
+mkdir -p workers/nodeWorker
+mkdir -p workers/dockerWorker
 
 # logparser.json
 # database
@@ -170,5 +185,4 @@ buildbot upgrade-master
 if ! buildbot start; then
     less twistd.log
 fi
-
 
