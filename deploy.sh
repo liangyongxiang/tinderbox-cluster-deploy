@@ -28,7 +28,9 @@ if [ "${INSTALL_DEPEND}" = "yes" ]; then
     if [ "${distributor}" = "Gentoo" ]; then
         emerge-webrsync
         emerge --verbose --quiet --update --noreplace app-misc/tmux dev-vcs/git app-misc/tmux dev-db/postgresql dev-python/pip
-        emerge --config dev-db/postgresql:14
+        if [ -z "$(ls -A /var/lib/postgresql/14/data)" ]; then
+            emerge --config dev-db/postgresql:14
+        fi
         if [ "$(cat /proc/1/comm)" = "systemd" ]; then
             systemctl enable --now postgresql-14
         else
