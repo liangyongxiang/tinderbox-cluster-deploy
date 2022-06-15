@@ -24,6 +24,8 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+# FIXME: Validate the WORKER_PATH which couldn't be folder hold by system,
+#        or be malformed string
 if [ -d "${WORKER_PATH}" ]; then
   echo "File ${WORKER_PATH} exists"
   echo "Please check if you worker has already been created"
