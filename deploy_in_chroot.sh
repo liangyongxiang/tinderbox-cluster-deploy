@@ -8,13 +8,21 @@ PASSWORD="${PASSWORD:-riscv}"
 MASTER_HOST="${MASTER_HOST:-localhost}"
 MASTER_PORT="${MASTER_PORT:-9989}"
 
-echo 'ACCEPT_KEYWORDS="~amd64"' >> /etc/portage/make.conf
+#echo 'ACCEPT_KEYWORDS="~amd64"' >> /etc/portage/make.conf
+echo "ACCEPT_KEYWORDS=\"~$(portageq envvar ARCH)\"" >> /etc/portage/make.conf
 
 emerge-webrsync
 chown -R portage:portage /var/db/repos/gentoo
 
 emerge -qvuUDN -j --with-bdeps=y @world
-emerge --verbose --quiet --noreplace dev-util/pkgcheck app-arch/zstd dev-lang/rust-bin dev-vcs/git dev-util/buildbot-worker
+emerge --verbose --quiet --noreplace \
+    app-arch/zstd  \
+    app-text/ansifilter \
+    dev-lang/rust-bin \
+    dev-util/buildbot-worker \
+    dev-util/pkgcheck \
+    dev-vcs/git \
+    sys-fs/inotify-tools
 
 cd /var/tmp
 
