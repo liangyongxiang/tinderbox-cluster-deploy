@@ -11,6 +11,7 @@ MASTER_PORT="${MASTER_PORT:-9989}"
 #echo 'ACCEPT_KEYWORDS="~amd64"' >> /etc/portage/make.conf
 echo "ACCEPT_KEYWORDS=\"~$(portageq envvar ARCH)\"" >> /etc/portage/make.conf
 
+# FIXME: sync the repository with git for double check.
 emerge-webrsync
 chown -R portage:portage /var/db/repos/gentoo
 
