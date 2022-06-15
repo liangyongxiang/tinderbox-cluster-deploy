@@ -24,12 +24,12 @@ SET row_security = off;
 -- Data for Name: projects_portage; Type: TABLE DATA; Schema: public; Owner: buildbot
 --
 
-INSERT INTO public.projects_portage VALUES (1, '20c3ba2b-a85f-42ec-bd0e-c70e175d940d', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d/systemd');
-INSERT INTO public.projects_portage VALUES (2, '20c3ba2b-a85f-42ec-bd0e-c70e175d940d', 'repos.conf', 'gentoo');
-INSERT INTO public.projects_portage VALUES (3, '1b2d0f00-4035-4bb4-9ed4-e3e55f98d26e', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d/no-multilib');
-INSERT INTO public.projects_portage VALUES (4, '1b2d0f00-4035-4bb4-9ed4-e3e55f98d26e', 'repos.conf', 'gentoo');
-INSERT INTO public.projects_portage VALUES (5, '19321b0c-0ec4-4766-978d-5494a563546e', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d');
-INSERT INTO public.projects_portage VALUES (6, '19321b0c-0ec4-4766-978d-5494a563546e', 'repos.conf', 'gentoo');
+INSERT INTO public.projects_portage VALUES (1, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfd', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d/systemd');
+INSERT INTO public.projects_portage VALUES (2, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfd', 'repos.conf', 'gentoo');
+INSERT INTO public.projects_portage VALUES (3, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcff', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d/no-multilib');
+INSERT INTO public.projects_portage VALUES (4, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcff', 'repos.conf', 'gentoo');
+INSERT INTO public.projects_portage VALUES (5, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfa', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d');
+INSERT INTO public.projects_portage VALUES (6, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfa', 'repos.conf', 'gentoo');
 
 
 --

@@ -140,14 +140,13 @@ sudo -u postgres createdb --owner buildbot ${GENTOOCI_DB} --template template0
 
 # FIXME: Configure data of gentoo-ci db instead of just importing them
 # import gentoo-ci db
-cp "${TINDERBOX_BASEDIR}/riscv_project.sql" "${TINDERBOX_BASEDIR}/riscv_projects_portage.sql" sql
+cp "${TINDERBOX_BASEDIR}"/{project,projects_portage}.sql sql
 sql_dbs=(
     gentoo_ci_schema.sql
     keywords.sql
     categorys.sql
     repositorys.sql
     project.sql
-    riscv_project.sql
     portage_makeconf.sql
     projects_emerge_options.sql
 
@@ -158,7 +157,6 @@ sql_dbs=(
     projects_package.sql
     projects_pattern.sql
     projects_portage.sql
-    riscv_projects_portage.sql
     projects_repositorys.sql
     projects_workers.sql
 
