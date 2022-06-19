@@ -26,7 +26,7 @@ fi
 if [ "${INSTALL_DEPEND}" = "yes" ]; then
     distributor=$(lsb_release --id --short)
     if [ "${distributor}" = "Gentoo" ]; then
-        emerge-webrsync
+        emerge-webrsync || emerge --sync
         emerge --verbose --quiet --update --noreplace app-misc/tmux dev-vcs/git app-misc/tmux dev-db/postgresql dev-python/pip
         if [ -z "$(ls -A /var/lib/postgresql/14/data)" ]; then
             emerge --config dev-db/postgresql:14
