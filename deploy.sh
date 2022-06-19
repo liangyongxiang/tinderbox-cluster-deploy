@@ -62,8 +62,8 @@ else
     source sandbox/bin/activate
 fi
 # fix portage aux_get
-export PATH="$(pwd)/tinderbox-cluster/bin:$(pwd)/sandbox/lib/portage/bin:${PATH}"
-export PYTHONPATH="$(pwd)/tinderbox-cluster:${PYTHONPATH}"
+export PATH="${TINDERBOX_BASEDIR}/tinderbox-cluster/bin:${TINDERBOX_BASEDIR}/sandbox/lib/portage/bin:${PATH}"
+export PYTHONPATH="${TINDERBOX_BASEDIR}/tinderbox-cluster:${PYTHONPATH}"
 
 mkdir -p tinderbox-cluster
 cd tinderbox-cluster
