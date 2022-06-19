@@ -24,9 +24,9 @@ SET row_security = off;
 -- Data for Name: projects; Type: TABLE DATA; Schema: public; Owner: buildbot
 --
 
-INSERT INTO public.projects VALUES ('e89c2c1a-46e0-4ded-81dd-c51afeb7fcff', 'gosbsbase', 'Gentoo Ci base project', 'profiles/default/linux/riscv', 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcbb', 1, 'all', true, true, 1, false, NULL);
-INSERT INTO public.projects VALUES ('e89c2c1a-46e0-4ded-81dd-c51afeb7fcfa', 'defriscv20_0unstable', 'Default riscv 20.0 Unstable', 'profiles/default/linux/riscv/20.0/rv64gc/lp64d', 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcbb', 1, 'unstable', true, true, 1, true, 'stage3-rv64_lp64d-openrc-latest');
-INSERT INTO public.projects VALUES ('e89c2c1a-46e0-4ded-81dd-c51afeb7fcfd', 'gosbstest', 'Gentoo Ci test project', 'profiles/default/linux/riscv/20.0/rv64gc/lp64d/systemd', 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcbb', 1, 'unstable', true, false, 1, true, 'stage3-rv64_lp64d-systemd-latest');
+INSERT INTO public.projects VALUES ('e89c2c1a-46e0-4ded-81dd-c51afeb7fcff', 'gosbsbase', 'Gentoo Ci base project', 'profiles/default/linux/riscv', 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcbb', 11, 'all', true, true, 1, false, NULL);
+INSERT INTO public.projects VALUES ('e89c2c1a-46e0-4ded-81dd-c51afeb7fcfa', 'defriscv20_0unstable', 'Default riscv 20.0 Unstable', 'profiles/default/linux/riscv/20.0/rv64gc/lp64d', 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcbb', 11, 'unstable', true, true, 1, true, 'stage3-rv64_lp64d-openrc-latest');
+INSERT INTO public.projects VALUES ('e89c2c1a-46e0-4ded-81dd-c51afeb7fcfd', 'gosbstest', 'Gentoo Ci test project', 'profiles/default/linux/riscv/20.0/rv64gc/lp64d/systemd', 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcbb', 11, 'unstable', true, false, 1, true, 'stage3-rv64_lp64d-systemd-latest');
 
 
 -- Completed on 2022-06-11 10:52:36 CEST

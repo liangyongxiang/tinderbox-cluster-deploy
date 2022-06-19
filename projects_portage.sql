@@ -26,7 +26,7 @@ SET row_security = off;
 
 INSERT INTO public.projects_portage VALUES (1, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfd', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d/systemd');
 INSERT INTO public.projects_portage VALUES (2, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfd', 'repos.conf', 'gentoo');
-INSERT INTO public.projects_portage VALUES (3, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcff', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d/no-multilib');
+INSERT INTO public.projects_portage VALUES (3, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcff', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d/desktop');
 INSERT INTO public.projects_portage VALUES (4, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcff', 'repos.conf', 'gentoo');
 INSERT INTO public.projects_portage VALUES (5, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfa', 'make.profile', 'default/linux/riscv/20.0/rv64gc/lp64d');
 INSERT INTO public.projects_portage VALUES (6, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfa', 'repos.conf', 'gentoo');
