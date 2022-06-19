@@ -141,7 +141,9 @@ sudo -u postgres createdb --owner buildbot ${GENTOOCI_DB} --template template0
 
 # FIXME: Configure data of gentoo-ci db instead of just importing them
 # import gentoo-ci db
-cp "${TINDERBOX_BASEDIR}"/{project,projects_portage}.sql sql
+if [ "${TEST_ARCH}" = riscv ]; then
+    cp "${TINDERBOX_BASEDIR}"/{project,projects_portage}.sql sql
+fi
 sql_dbs=(
     gentoo_ci_schema.sql
     keywords.sql
