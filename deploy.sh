@@ -23,6 +23,11 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+# avoid emerge commnad in sandbox
+if command -v deactivate; then
+    deactivate
+fi
+
 if [ "${INSTALL_DEPEND}" = "yes" ]; then
     distributor=$(lsb_release --id --short)
     if [ "${distributor}" = "Gentoo" ]; then
@@ -42,6 +47,8 @@ if [ "${INSTALL_DEPEND}" = "yes" ]; then
         echo -e "Please install the dependencies manually: \ngit postgresql python pip"
     fi
 fi
+
+echo "Create Gentoo CI for ${TEST_ARCH}"
 
 # get others resources
 mkdir -p "${TINDERBOX_BASEDIR}"
@@ -141,9 +148,6 @@ sudo -u postgres createdb --owner buildbot ${GENTOOCI_DB} --template template0
 
 # FIXME: Configure data of gentoo-ci db instead of just importing them
 # import gentoo-ci db
-if [ "${TEST_ARCH}" = riscv ]; then
-    cp "${TINDERBOX_BASEDIR}"/{project,projects_portage}.sql sql
-fi
 sql_dbs=(
     gentoo_ci_schema.sql
     keywords.sql
@@ -174,6 +178,19 @@ for db in ${sql_dbs[@]}; do
 
     sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -f "sql/$db" >/dev/null
 done
+
+if [ "${TEST_ARCH}" = 'riscv' ]; then
+    # projects_portage
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "UPDATE projects_portage SET value='default/linux/riscv/20.0/rv64gc/lp64d/systemd' WHERE id = 1"
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "UPDATE projects_portage SET value='default/linux/riscv/20.0/rv64gc/lp64d/desktop' WHERE id = 3"
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "UPDATE projects_portage SET value='default/linux/riscv/20.0/rv64gc/lp64d' WHERE id = 5"
+    # projects
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "UPDATE projects SET profile='profiles/default/linux/riscv', keyword_id='11' WHERE uuid = 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcff'"
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "UPDATE projects SET name='defriscv20_0unstable', description='Default riscv 20.0 Unstable', profile='profiles/default/linux/riscv/20.0/rv64gc/lp64d', keyword_id='11', image='stage3-rv64_lp64d-openrc-latest' WHERE uuid = 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfa'"
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "UPDATE projects SET profile='profiles/default/linux/riscv/20.0/rv64gc/lp64d/systemd', keyword_id='11', enabled='t', image='stage3-rv64_lp64d-systemd-latest' WHERE uuid = 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfd'"
+    # projects_portages_makeconf
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "INSERT INTO public.projects_portages_makeconf VALUES (63, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcff', 3, '--jobs');"
+fi
 
 # migrate version_control
 migrate version_control postgresql://buildbot:${PASSWORD}@${DB_IP_ADDRESS}/${GENTOOCI_DB} buildbot_gentoo_ci/db/migrate
