@@ -70,7 +70,7 @@ else
 fi
 # fix portage aux_get
 export PATH="${TINDERBOX_BASEDIR}/tinderbox-cluster/bin:${TINDERBOX_BASEDIR}/sandbox/lib/portage/bin:${PATH}"
-export PYTHONPATH="${TINDERBOX_BASEDIR}/tinderbox-cluster:${PYTHONPATH}"
+export PYTHONPATH="${TINDERBOX_BASEDIR}/tinderbox-cluster"
 
 mkdir -p tinderbox-cluster
 cd tinderbox-cluster
