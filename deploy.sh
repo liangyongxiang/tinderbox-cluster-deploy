@@ -189,6 +189,7 @@ if [ "${TEST_ARCH}" = 'riscv' ]; then
     sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "UPDATE projects SET name='defriscv20_0unstable', description='Default riscv 20.0 Unstable', profile='profiles/default/linux/riscv/20.0/rv64gc/lp64d', keyword_id='11', image='stage3-rv64_lp64d-openrc-latest' WHERE uuid = 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfa'"
     sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "UPDATE projects SET profile='profiles/default/linux/riscv/20.0/rv64gc/lp64d/systemd', keyword_id='11', enabled='t', image='stage3-rv64_lp64d-systemd-latest' WHERE uuid = 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcfd'"
     # projects_portages_makeconf
+    sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "UPDATE public.projects_portages_makeconf set value='riscv64-unknown-linux-gnu' WHERE id = 2;"
     sudo -u postgres psql -Ubuildbot -d${GENTOOCI_DB} -c "INSERT INTO public.projects_portages_makeconf VALUES (63, 'e89c2c1a-46e0-4ded-81dd-c51afeb7fcff', 3, '--jobs');"
 fi
 
