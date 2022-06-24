@@ -127,6 +127,7 @@ mkdir -p workers/dockerWorker
 # logparser.json
 # database
 sed -i "s/user:password@host/buildbot:${PASSWORD}@${DB_IP_ADDRESS}/g" logparser.json
+sed -i "s/\"default_uuid\" : \"uuid\"/\"default_uuid\" : \"e89c2c1a-46e0-4ded-81dd-c51afeb7fcff\"/"
 # sed -i "s/sa.Column('image'/#sa.Column('image'/g" buildbot_gentoo_ci/db/model.py
 
 # gentooci.cfg
