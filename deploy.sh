@@ -204,6 +204,7 @@ fi
 
 # buildbot.tac
 sed -i 's/umask = None/umask = 0o022/' buildbot.tac
+chmod +x bin/ci_log_parser
 
 # update database
 buildbot upgrade-master
