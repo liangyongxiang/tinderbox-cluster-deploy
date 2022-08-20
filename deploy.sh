@@ -3,7 +3,7 @@
 set -x
 set -e
 
-TINDERBOX_BASEDIR="${TINDERBOX_BASEDIR:-/var/tmp/tinderbox}"
+TINDERBOX_BASEDIR="${TINDERBOX_BASEDIR:-/var/lib/buildmaster/gentoo-ci-cloud}"
 SQL_URL="${SQL_URL:-http://90.231.13.235:8000}"
 INSTALL_DEPEND="${INSTALL_DEPEND:-yes}"
 
