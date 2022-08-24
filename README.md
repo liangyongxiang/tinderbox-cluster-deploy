@@ -1,19 +1,13 @@
 # tinderbox
 
-## install
+# Usage
 
-gentoo:
+# Deploy tinderbox-cluster master server
 
-```bash
+Change directory into master directory:
 
-export IRC_CHANNEL_NAME="yourname-bb"
-export IRC_BOT_NAME="yournamebot-bb"
+1. run `prepare.sh` for prepare environment and install dependencies for tinderbox-cluster master
 
-bash <(curl -s https://raw.githubusercontent.com/liangyongxiang/tinderbox-cluster-deploy/master/gentoo_deploy.sh)
-```
+2. run `init-db.sh` for database initialization
 
-debian:
-
-```bash
-: # TODO
-```
+3. run `tinderbox-cluster.sh` for first start of tinderbox-cluster master server
